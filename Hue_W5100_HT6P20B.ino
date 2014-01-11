@@ -55,10 +55,7 @@ String hueCmd;  // Hue command
 //  ACT_HT6P20B variables
  
 byte pinRF;      // RF Module pin
- 
 boolean startbit;
-boolean dataok;
- 
 int counter;  //received bits counter: 22 of Address + 2 of Data + 4 of EndCode (Anti-Code)
 int lambda;  // on pulse clock width (if fosc = 2KHz than lambda = 500 us)
 int dur0, dur1;  // pulses durations (auxiliary)
@@ -295,12 +292,11 @@ boolean ACT_HT6P20B(unsigned long &addr, unsigned int &button)
       buffer = 0;
       counter = 0;
       
-      dataok = false;
       startbit = true;
     }
   }
   // If Start Bit is OK, then starts measure os how long the signal is level "1" and check is value is into acceptable range.
-  if (startbit && !dataok && counter < 28)
+  if (startbit && counter < 28)
   {
     ++counter;
     
@@ -326,8 +322,6 @@ boolean ACT_HT6P20B(unsigned long &addr, unsigned int &button)
     // Check if Anti-Code is OK (last 4 bits of buffer equal "0101")
     if ((bitRead(buffer, 0) == 1) && (bitRead(buffer, 1) == 0) && (bitRead(buffer, 2) == 1) && (bitRead(buffer, 3) == 0))
     {
-      dataok = true;
-      
       counter = 0;
       startbit = false;
       
